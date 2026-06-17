@@ -1,0 +1,43 @@
+#
+# Makefile for IP54 paravirtual kernel drivers
+# Run this on an IRIX 6.5.5 machine with MIPSpro 7.4.4m.
+#
+# Usage:
+#   cd /var/sysgen/boot/src
+#   make -f Makefile.ip54 all
+#   make -f Makefile.ip54 install
+#
+CC = cc
+CFLAGS = -c -n32 -mips3 -O2 -G 0 -non_shared -TENV:kernel \
+         -DIP54 -D_KERNEL -I/usr/include
+
+SRCS = if_pvnet.c pvfb.c pvaudio.c IP54.c
+ASRCS = csu.IP54.s
+OBJS = if_pvnet.o pvfb.o pvaudio.o IP54.o csu.IP54.o
+
+BOOTDIR = /var/sysgen/boot
+
+all: $(OBJS)
+
+if_pvnet.o: if_pvnet.c
+	$(CC) $(CFLAGS) if_pvnet.c -o if_pvnet.o
+
+pvfb.o: pvfb.c
+	$(CC) $(CFLAGS) pvfb.c -o pvfb.o
+
+pvaudio.o: pvaudio.c
+	$(CC) $(CFLAGS) pvaudio.c -o pvaudio.o
+
+IP54.o: IP54.c
+	$(CC) $(CFLAGS) IP54.c -o IP54.o
+
+csu.IP54.o: csu.IP54.s
+	$(CC) $(CFLAGS) csu.IP54.s -o csu.IP54.o
+
+install: $(OBJS)
+	cp $(OBJS) $(BOOTDIR)/
+	@echo "Installed to $(BOOTDIR)/"
+	@echo "Now run: autoconfig -f IP54"
+
+clean:
+	rm -f $(OBJS)

@@ -1,0 +1,8 @@
+*#ident "$Revision: 1.0 $"
+*
+* pvfb - IP54 Paravirtual Framebuffer Driver
+*
+*FLAG	PREFIX	SOFT	#DEV	DEPENDENCIES
+cs	pvfb	-	-
+
+$$$

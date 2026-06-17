@@ -1,0 +1,200 @@
+*
+* IP54.sm - Complete IRIX system configuration for IP54 Paravirtual SGI
+*
+* Standalone system file — contains all modules from irix.sm + gfx.sm + audio.sm.
+* Run: lboot -s /var/sysgen/system/IP54.sm
+*
+
+KERNEL: kernel
+
+* ======= Core OS modules (from irix.sm INCLUDE directives) =======
+INCLUDE: nolocks
+INCLUDE: numa, os, disp, mem, zero, sharena
+INCLUDE: ksync
+INCLUDE: kmem
+INCLUDE: io, gentty, ptc, pvuart_cn, cn, stream
+INCLUDE: pckm
+INCLUDE: specfs, pipefs, proc, fifofs, hwgfs
+
+* ======= SCSI disk and tape =======
+USE: cdl, scsi, dksc, tpsc, tpscutil, ds, scsiha
+USE: smfd
+
+* ======= WD93 SCSI controller =======
+USE: wd93
+
+* ======= Volume management =======
+USE: xlv
+USE: xlv_plex
+USE: failover
+
+* ======= Checkpoint/restart =======
+USE: cpr
+
+* ======= Filesystems =======
+USE: fd, namefs
+USE: efs, uds
+USE: nfs, snfs, lockd, nfs3, svckudp
+USE: autofs, cachefs, lofs
+USE: quotas
+USE: xfsquotas
+EXCLUDE: cxfs
+USE: dmi xfsdmapi umfs
+USE: grio
+USE: xfsrt
+USE: xfs
+EXCLUDE: cfs
+
+* ======= Graph subsystem =======
+USE: graph
+
+* ======= STREAMS =======
+USE: sockmod, timod, tirdwr,
+USE: ticlts, ticots, ticotsord
+USE: tpisocket, tpitcp, tpiudp, tpirawip, tpiicmp
+USE: xtimer, snif
+USE: llc2
+USE: ldterm, ptem
+USE: pipemod
+USE: connld
+USE: log
+USE: sad
+
+* ======= Input devices =======
+USE: kbd, alp
+
+* ======= Networking =======
+USE: ipfilter
+USE: ip_mroute
+USE: if_sl
+USE: if_ppp
+USE: if_sw
+USE: if_ls
+USE: if_lsp
+
+* ======= Filesystem control =======
+USE: fsctl
+USE: imon
+USE: xfs_attr_fetch
+
+* ======= Security =======
+USE: eag
+USE: sat
+USE: capability
+USE: acl
+USE: acl_hwg
+USE: acl_xfs
+USE: acl_nfs3
+USE: mac
+USE: cap_mac_access
+USE: mac_nfs3
+USE: mac_xfs
+USE: mac_ipc
+USE: mac_specfs
+USE: mac_autofs
+USE: mac_proc
+USE: mac_pipe
+USE: mac_fifo
+USE: mac_fd
+USE: mac_efs
+USE: mac_hwg
+USE: sesmgr
+USE: ip_sec
+
+* ======= Async I/O =======
+USE: kaio
+USE: postwait
+USE: klistio
+
+* ======= Other =======
+USE: shareII
+
+* ======= Stubs =======
+USE: dnstubs, gfxstubs, prfstubs, quotasstubs, idbgstubs, nfsstubs
+USE: pipefsstubs, vidstubs, ng1stubs, gr2stubs, frsstubs, griostubs
+USE: efsstubs, xfsstubs, xfsquotasstubs, xlvstubs, tpisocketstubs, bpqueuestubs
+USE: dmistubs, xfsdmapistubs, umfsstubs
+USE: macstubs, aclstubs
+USE: satstubs, sesmgrstubs
+USE: xlvplexstubs
+USE: failoverstubs
+USE: cachefsstubs, nlmstubs, lockdstubs, mgrasstubs, crimestubs
+USE: xfsrtstubs, frustubs, cachefsidbgstubs, kaiostubs, devicestubs, mgvstubs
+USE: dfsstubs, postwaitstubs, klistiostubs, uncstubs
+USE: shareIIstubs
+USE: cxfsstubs
+USE: swipestubs
+USE: atmstubs
+USE: lofsstubs, autofsstubs
+USE: stpstubs
+USE: vmestubs
+
+* ======= IP54 stubs (symbols from IP22 kernel.o not applicable to IP54) =======
+USE: ip54_stubs
+
+* ======= IPC =======
+USE: ipc, msg, sem
+
+* ======= User-level semaphores =======
+USE: psema, usync
+
+* ======= Kernel logging =======
+USE: klog
+USE: usema
+
+* ======= Serial I/O =======
+USE: tserialio
+
+* ======= Bus support =======
+USE: usrbus
+
+* ======= Profiling =======
+USE: prf
+
+* ======= Debugging (excluded by default) =======
+EXCLUDE: idbg, disp_idbg, mloadidbg, bsdidbg, stridbg, graphidbg, asidbg, procidbg, vmidbg, xfsidbg
+EXCLUDE: xlvidbg
+EXCLUDE: pgrpidbg, sessionidbg
+EXCLUDE: dmiidbg, umfsidbg, grioidbg, spec_idbg
+EXCLUDE: dp_idbg, cachefsidbg
+EXCLUDE: nfsidbg
+
+* ======= Graphics (from gfx.sm) =======
+INCLUDE: shmiq idev
+INCLUDE: mouse keyboard
+USE: dial dialbox sball tablet calcomp hitachi imp magellan wacom
+USE: ng1
+USE: gr2
+USE: mgras
+INCLUDE: tport
+INCLUDE: tportpckbd
+INCLUDE: htport
+USE: gfxs rrm xconn
+USE: gfx
+
+* ======= Audio (from audio.sm) =======
+USE: kdsp
+
+* ======= IP54 Paravirtual drivers =======
+INCLUDE: pvdisk
+INCLUDE: if_pvnet
+INCLUDE: pvfb
+INCLUDE: pvaudio
+USE: bsd
+
+* ======= Root and swap devices =======
+ROOTDEV: /dev/root
+SWAPDEV: /dev/swap 0 0
+DUMPDEV: /dev/swap
+
+* ======= Compiler/linker settings for IP54 =======
+* Use /tmp/cc wrapper to patch empty edt[] in master.c
+CC: /tmp/cc
+LD: /usr/lib/ld
+
+CCOPTS: -DIP54 -DMAXCPU=32 -D_PAGESZ=4096 -D_KERNEL -n32 -mips3 -O2 -G 8 -non_shared -TENV:kernel -DDEFAULTSEMAMETER=1 -I.
+LDOPTS: -non_shared -e start -N -woff 133 -G 8 -woff 84,47,39,17 -mips3 -n32 -nostdlib -T 88002000 -wall
+
+TUNE-TAG:32
+TUNE-TAG:NOT_MINIROOT
+TUNE-TAG:NOT_NEED_LPAGES

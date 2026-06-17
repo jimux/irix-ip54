@@ -1,0 +1,14 @@
+*
+* pvuart_cn - IP54 Paravirtual UART console driver
+*
+* Replaces sduart (Z85130) for the IP54 paravirtual machine.
+* Uses the same PREFIX (du) and SOFT major (260) as sduart so that
+* cn.c can call du_init(), ducons_write(), etc. by name and lboot
+* links duinfo/dudevflag from pvuart_cn.o in place of zduart.o.
+*
+*FLAG	PREFIX	SOFT	#DEV	DEPENDENCIES
+sfr	du	260	-	stty_ld,io
+
++thread_class	serial
+
+$$$

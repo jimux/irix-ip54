@@ -1,0 +1,7 @@
+*
+* ip54_stubs - Null implementations for IP22-specific symbols
+*
+*FLAG	PREFIX	SOFT	#DEV	DEPENDENCIES
+oxu	-	-	-
+
+$$$

@@ -1,0 +1,10 @@
+*#ident "$Revision: 1.0 $"
+*
+* pvdisk - IP54 Paravirtual Disk Driver
+*
+* Soft block device: edtinit always called, creates hwgraph partition nodes.
+*
+*FLAG	PREFIX	SOFT	#DEV	DEPENDENCIES
+osb	pvdisk	-	-
+
+$$$
