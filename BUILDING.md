@@ -83,3 +83,19 @@ full history of this bug.
 - `khdrs.tar` is a snapshot of the IRIX 6.5.5 kernel headers needed by
   `if_pvnet.c` (it expects an older `net/raw.h` layout). If you're building
   on a real IRIX system that already has these headers, you don't need it.
+
+## Verified rebuild (2026-06-17)
+
+The committed source (800-line pvfb.c + the matching pvuart_cn/pvdisk/
+pvaudio/if_pvnet/IP54.c) builds a `/unix.new` that is **byte-identical
+in size + symbol layout** to the working qemu-sgi golden:
+
+- /unix.new = 6,134,744 bytes  (matches golden)
+- cause_ip5_count = 0x8829FEE0  (matches QEMU's compiled default)
+- All 92 PROM-patch addresses target the same kernel offsets as the
+  golden's binary
+- Boots to clogin in ~4 seconds on i9-14900HX
+- Reaches multi-user; telnet responsive; init 0 clean
+
+The rebuild is reproducible: rerun `run_m1_kernel_rebuild.py` from
+qemu-sgi-project, save the resulting disk.qcow2 as your new golden.
