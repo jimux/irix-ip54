@@ -285,9 +285,26 @@ pvdiskstrategy(struct buf *bp)
      * must write the bcopy'd data back to physmemory AND invalidate the stale
      * lines.  Without this, large reads intermittently come back as zeros
      * (the sgi-ip54 "read fragility").  Writes need no flush (device-bound).
+     *
+     * VCE / cache-aliasing extension (2026-06-19): plain dki_dcache_wbinval
+     * only flushes lines indexed by `buf`'s color (the kernel-VA index).  On
+     * R4k/R5k's VIPT primary dcache a user mmap of the same physical page
+     * at a different VA color has its OWN cache lines that may still hold
+     * stale zeros.  The xdm second-wave crashes pinned to libpthread.so
+     * GOT entries reading as zero at runtime (xdm /core EPC =
+     * libpthread+0xfaac in _SGIPT_stk_fork_child, t9=0 from a GOT[90] load,
+     * while the on-disk GOT[90] = 0xc22faa0 is correct) match exactly this
+     * cache-alias pattern.  Use data_cache_wbinval with CACH_OTHER_COLORS
+     * to flush every color alias of the filled region in addition to the
+     * current-color flush.  See progress_notes/ip54_libpthread_got_zero_2026-06-19.md.
      */
-    if ((bp->b_flags & B_READ) && done > 0)
+    if ((bp->b_flags & B_READ) && done > 0) {
         dki_dcache_wbinval(buf, (int)done);
+#ifdef CACH_OTHER_COLORS
+        data_cache_wbinval(buf, (int)done,
+                           CACH_OTHER_COLORS | CACH_IO_COHERENCY);
+#endif
+    }
 
     bp->b_resid = nbytes - done;
 
